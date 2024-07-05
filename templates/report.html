@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles1.css') }}">
+    <title>Report an Issue</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Report an Issue</h1>
+        <form action="/report" method="POST" enctype="multipart/form-data">
+            <input type="text" name="name" placeholder="Your Name" required>
+            <input type="email" name="email" placeholder="Your Email" required>
+            <textarea name="issue" placeholder="Describe your issue" required></textarea>
+            <input type="file" name="screenshot" accept="image/*">
+            <button type="submit">Submit Report</button>
+        </form>
+    </div>
+</body>
+</html>

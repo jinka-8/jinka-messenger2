@@ -81,7 +81,7 @@
                             update_list_id=false;
                         }
                         var newLi = document.createElement('li');
-                        newLi.setAttribute('id', message._id);
+                        // newLi.setAttribute('id', message._id);
                         // Format the message content as desired (example shows message name and content)
                         newLi.innerHTML = `<li id="${message._id}}"> <strong>${message.name}:</strong> ${message.message}  <span class="message-time">${message.created_at}</span>  </li>`;
                         // Append the <li> element to the <ul> list
@@ -117,4 +117,10 @@
     setInterval(addMessageToList, 1000);
 
 </script>
-{% endblock %}
+
+
+
+<div>
+    <a href="/report" style="margin-top: 20px; display: block; text-align: center;">Please tell us your report/issues</a>
+</div>
+{% endblock %} 

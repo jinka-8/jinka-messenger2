@@ -4,6 +4,7 @@ from kafka import KafkaProducer
 import json
 import datetime
 from bson import ObjectId
+import os
 
 app = Flask(__name__)
 
@@ -12,6 +13,11 @@ client = MongoClient('localhost', 27017)
 db = client['messaging_app']
 names_collection = db['names']
 messages_collection = db['messages']
+
+# Set the upload folder for screenshots
+UPLOAD_FOLDER = 'uploads'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 # Setup Kafka producer
 producer = KafkaProducer(bootstrap_servers='localhost:9092', value_serializer=lambda v: json.dumps(v).encode('utf-8'))
@@ -112,6 +118,35 @@ def send_message():
     name = result["name"]
     messages_collection.insert_one({"created_at":datetime.datetime.now(), "name":name, "message":message})
     return jsonify({'status': 'Message sent!'})
+
+
+@app.route('/report', methods=['GET', 'POST'])
+def report():
+    if request.method == 'GET':
+        return render_template("report.html")
+    elif request.method == 'POST':
+        name = request.form['name']
+        email = request.form['email']
+        issue = request.form['issue']
+        screenshot = request.files['screenshot']
+
+        # Save screenshot file
+        if screenshot:
+            screenshot_path = os.path.join(app.config['UPLOAD_FOLDER'], screenshot.filename)
+            screenshot.save(screenshot_path)
+        else:
+            screenshot_path = None
+
+        # Save report to MongoDB
+        report_data = {
+            'name': name,
+            'email': email,
+            'issue': issue,
+            'screenshot': screenshot_path
+        }
+        db.reports_collection.insert_one(report_data)
+
+        return redirect("/messages")
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
