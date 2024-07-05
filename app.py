@@ -12,19 +12,19 @@ db = client.message_db
 messages_collection = db.messages
 
 
-@app.route('/')
-def home(request):
-
-    if request.method=="GET":
+@app.route('/', methods=['GET', 'POST'])
+def home():
+    if request.method == 'GET':
         return render_template("root.html")
-
-    data=request.json()
-
-    print(data)
-
-    if 'name' in data:
-        #save ip and name into the database
-        return redirect("/messages")
+    elif request.method == 'POST':
+        data = request.get_json()
+        print(data)
+        if 'name' in data:
+            # Save the IP and name into the database (dummy print statement here)
+            print(f"Name: {data['name']}, IP: {request.remote_addr}")
+            return redirect("/messages")
+        else:
+            return jsonify({"error": "Name not provided"}), 400
 
 
 
