@@ -2,12 +2,19 @@
 {% block content %}
 <div class="container">
     <h1>Jinka Messaging App</h1>
-    <br></br>
-    <h2>Welcome to the jinka messaging app. here we are providing</h2>
-    <br></br>
-    <h3>END_TO_END Encryption</h3>
+    <br>
+    <h2>Welcome to the Jinka messaging app. Here we are providing</h2>
+    <br>
+    <h3>END-TO-END Encryption</h3>
+
+    {%if no_name%}
+    <a href="/">Please enter your name !!</a>
+    {%else%}
+    <p id="welcome">Welcome    {{welcome}}</p>
+    {% endif %}
+
     <form id="message-form">
-        <input type="text" id="message-input" placeholder="Enter your message">
+        <input type="text" id="message-input" placeholder="Enter your message" required>
         <button type="submit">Send</button>
     </form>
     <div id="response"></div>
@@ -15,7 +22,7 @@
         <h2>Messages</h2>
         <ul>
             {% for message in messages %}
-                <li><strong>{{ message.ip_address }}:</strong> {{ message.message }}</li>
+                <li><strong>{{ message.name }}:</strong> {{ message.message }}</li>
             {% endfor %}
         </ul>
     </div>
@@ -29,12 +36,20 @@
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
             },
-            body: 'message=' + message
+            body: 'message=' + encodeURIComponent(message)
         })
-        .then(response => response.json())
+        .then(response => {
+            if (response.redirected) {
+                window.location.href = response.url;
+            } else {
+                return response.json();
+            }
+        })
         .then(data => {
-            document.getElementById('response').innerText = data.status;
-            location.reload();  // Reload to fetch the latest messages
+            if (data) {
+                document.getElementById('response').innerText = data.status;
+                location.reload();  // Reload to fetch the latest messages
+            }
         });
     });
 </script>

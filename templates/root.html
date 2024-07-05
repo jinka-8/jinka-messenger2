@@ -3,13 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <title>Send Name to API</title>
 </head>
 <body>
+    {% if error %}
+    <h2 style="color:red;">{{ error }}</h2>
+    {% endif %}
     <h1>Send Name to API</h1>
-    <form action="http://192.168.1.50:5000/" method="POST">
+    <form action="/" method="POST">
         <input type="text" name="name" placeholder="Enter your name" required>
         <button type="submit">Send</button>
     </form>
+    <a href="/" style="margin-top: 20px; display: block; text-align: center;">Please enter your name !!</a>
 </body>
 </html>
