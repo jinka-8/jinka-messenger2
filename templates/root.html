@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Send Name to API</title>
+    <script>
+        function sendName() {
+            const name = document.getElementById('name').value;
+            const data = { name: name };
+
+            fetch('http://192.168.1.50:5000/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        }
+    </script>
+</head>
+<body>
+    <h1>Send Name to API</h1>
+    <input type="text" id="name" placeholder="Enter your name">
+    <button onclick="sendName()">Send</button>
+</body>
+</html>
