@@ -22,7 +22,11 @@
         <h2>Messages</h2>
         <ul id="message-list">
             {% for message in messages %}
-                <li id={{message._id}}><strong>{{ message.name }}:</strong> {{ message.message }}</li>
+            <li id={{message._id}}>
+                <strong>{{ message.name }}:</strong> 
+                {{ message.message }} 
+                <span class="message-time">{{ message.created_at }}</span>
+            </li>
             {% endfor %}
         </ul>
     </div>
@@ -79,7 +83,7 @@
                         var newLi = document.createElement('li');
                         newLi.setAttribute('id', message._id);
                         // Format the message content as desired (example shows message name and content)
-                        newLi.innerHTML = `<strong>${ message.name }:</strong> ${message.message}`;
+                        newLi.innerHTML = `<li id="${message._id}}"> <strong>${message.name}:</strong> ${message.message}  <span class="message-time">${message.created_at}</span>  </li>`;
                         // Append the <li> element to the <ul> list
                         var ul = document.getElementById('message-list');
                         ul.prepend(newLi);

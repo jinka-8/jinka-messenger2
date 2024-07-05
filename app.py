@@ -72,8 +72,10 @@ def index():
     if message_id:
         messages = list(messages_collection.find({"_id":{"$gt":message_id}}).sort('_id', -1).limit(1))
         
+
         for message in messages:
             message['_id'] = str(message['_id'])
+            message["created_at"] = message["created_at"].strftime('%a, %d %b %Y %H:%M:%S')
 
         if not messages:
             return jsonify({"data":""})
@@ -82,12 +84,14 @@ def index():
     # Retrieve the last 6 messages in descending order
     messages = list(messages_collection.find().sort('_id', -1).limit(6))
 
+    for message in messages:
+            message['_id'] = str(message['_id'])
+            message["created_at"] = message["created_at"].strftime('%a, %d %b %Y %H:%M:%S')
+
     # Map IP addresses to names
     result = []
     for message in messages:
         ip_address = message.get('ip_address')
-        name_entry = names_collection.find_one({'ip': ip_address})
-        name = name_entry['name'] if name_entry else ip_address
         result.append(message)
     
     # print(render_template('index.html', context=result))

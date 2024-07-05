@@ -66,6 +66,7 @@ ul {
 }
 
 li {
+    position: relative; /* Ensures the absolute positioning of .message-time is relative to the li */
     margin-bottom: 10px;
     padding: 10px;
     background-color: #f9f9f9;
@@ -84,7 +85,7 @@ li {
 }
 
 .container h3 {
-    color: red
+    color: red;
 }
 
 /* Styling for anchor tags */
@@ -113,4 +114,13 @@ a:hover {
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s ease;
+}
+
+/* Style for message time */
+.message-time {
+    position: absolute;
+    bottom: 5px; /* Adjust as needed to position the time correctly */
+    right: 10px; /* Adjust as needed to position the time correctly */
+    font-size: 0.8em;
+    color: #888;
 }
