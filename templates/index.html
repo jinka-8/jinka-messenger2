@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <h1>Jinka Messaging App</h1>
+    <br></br>
+    <h2>Welcome to the jinka messaging app. here we are providing</h2>
+    <br></br>
+    <h3>END_TO_END Encryption</h3>
+    <form id="message-form">
+        <input type="text" id="message-input" placeholder="Enter your message">
+        <button type="submit">Send</button>
+    </form>
+    <div id="response"></div>
+    <div id="messages">
+        <h2>Messages</h2>
+        <ul>
+            {% for message in messages %}
+                <li><strong>{{ message.ip_address }}:</strong> {{ message.message }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+<script>
+    document.getElementById('message-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const message = document.getElementById('message-input').value;
+        fetch('/send', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: 'message=' + message
+        })
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('response').innerText = data.status;
+            location.reload();  // Reload to fetch the latest messages
+        });
+    });
+</script>
+{% endblock %}
