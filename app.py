@@ -2,6 +2,8 @@ from flask import Flask, request, render_template, redirect, jsonify
 from pymongo import MongoClient
 from kafka import KafkaProducer
 import json
+import datetime
+from bson import ObjectId
 
 app = Flask(__name__)
 
@@ -55,12 +57,28 @@ def index():
     no_name=""
     welcome=""
 
+    message_id = request.args.get("id", "")
+
+    if message_id:
+        message_id = ObjectId(message_id)
+
     if not result:
         no_name = "Enter your name!"
 
     else:
         welcome = result["name"]
 
+    
+    if message_id:
+        messages = list(messages_collection.find({"_id":{"$gt":message_id}}).sort('_id', -1).limit(1))
+        
+        for message in messages:
+            message['_id'] = str(message['_id'])
+
+        if not messages:
+            return jsonify({"data":""})
+        
+        return jsonify({"data":messages})
     # Retrieve the last 6 messages in descending order
     messages = list(messages_collection.find().sort('_id', -1).limit(6))
 
@@ -73,7 +91,6 @@ def index():
         result.append(message)
     
     # print(render_template('index.html', context=result))
-
     
     return render_template('index.html', messages=result, no_name=no_name, welcome=welcome)
 
@@ -89,7 +106,7 @@ def send_message():
         return redirect("/?error=Please enter your name first!!")
 
     name = result["name"]
-    messages_collection.insert_one({"name":name, "message":message})
+    messages_collection.insert_one({"created_at":datetime.datetime.now(), "name":name, "message":message})
     return jsonify({'status': 'Message sent!'})
 
 if __name__ == '__main__':

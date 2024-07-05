@@ -20,15 +20,20 @@
     <div id="response"></div>
     <div id="messages">
         <h2>Messages</h2>
-        <ul>
+        <ul id="message-list">
             {% for message in messages %}
-                <li><strong>{{ message.name }}:</strong> {{ message.message }}</li>
+                <li id={{message._id}}><strong>{{ message.name }}:</strong> {{ message.message }}</li>
             {% endfor %}
         </ul>
     </div>
 </div>
 <script>
+
+    let list_id=null
+    const messageInput = document.getElementById('message-input');
+    messageInput.focus();
     document.getElementById('message-form').addEventListener('submit', function(event) {
+        messageInput.focus();
         event.preventDefault();
         const message = document.getElementById('message-input').value;
         fetch('/send', {
@@ -44,6 +49,7 @@
             } else {
                 return response.json();
             }
+            messageInput.focus();
         })
         .then(data => {
             if (data) {
@@ -52,5 +58,59 @@
             }
         });
     });
+
+    // Function to make an API call and append messages to the <ul> list
+    function fetchAndAppendMessages(listId) {
+        // Make a GET request to the API endpoint
+        let update_list_id=true;
+
+        fetch(`/messages?id=${listId}`)
+            .then(response => response.json())
+            .then(messages => {
+                if(messages && messages.data){
+
+                    messages.data.forEach(message => {
+                        // Create a new <li> element
+                            messageInput.focus();
+                        if (update_list_id){
+                            list_id=message._id;
+                            update_list_id=false;
+                        }
+                        var newLi = document.createElement('li');
+                        newLi.setAttribute('id', message._id);
+                        // Format the message content as desired (example shows message name and content)
+                        newLi.innerHTML = `<strong>${ message.name }:</strong> ${message.message}`;
+                        // Append the <li> element to the <ul> list
+                        var ul = document.getElementById('message-list');
+                        ul.prepend(newLi);
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching messages:', error);
+            });
+    }
+
+    // Function to add a new <li> element to the <ul> list
+    function addMessageToList() {
+        
+        messageInput.focus();
+        if(!list_id)
+        {
+            var message_list = document.getElementById("message-list")
+
+            // Get the first <li> element within the <ul> list
+            var firstLi = message_list.querySelector('li');            // Check if the firstLi exists and log its id
+            if (firstLi) {
+                list_id = firstLi.id;
+            }
+        }
+
+        fetchAndAppendMessages(list_id);
+    }
+
+    // Interval to add a new <li> element every 0.3 seconds
+    setInterval(addMessageToList, 1000);
+
 </script>
 {% endblock %}
